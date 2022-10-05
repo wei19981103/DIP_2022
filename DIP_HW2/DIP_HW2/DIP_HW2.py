@@ -6,7 +6,7 @@ import math
 img = cv2.imread(".\\lena.jpg", 1)
 height, width, channel_num = img.shape
 center_x, center_y = (width / 2, height / 2)
-cv2.imshow('Original',img)
+cv2.imshow('Original', img)
 
 #draw Histogram
 def draw_hist(img):
@@ -95,12 +95,7 @@ def adj_brightness(img, brightness):
     img_adjsut_brightness = np.zeros([height, width], np.uint8)
     for i in range(height):
         for j in range(width):
-            if img[i][j] + brightness > 255:
-                img_adjsut_brightness[i][j] = 255
-            elif img[i][j] + brightness < 0:
-                img_adjsut_brightness[i][j] = 0
-            else:
-                img_adjsut_brightness[i][j] = img[i][j] + brightness
+                img_adjsut_brightness[i][j] = max(0, min(img[i][j] + brightness, 255))
     return img_adjsut_brightness
 
 #adjust contrast
@@ -137,47 +132,83 @@ def hist_equ(img):
 
 #gray 1
 img_gray1 = gray1(img)
-cv2.imshow('Gray1', img_gray1)
+hist_gray1 = draw_hist(img_gray1)
+plt.subplot(2, 7, 1)
+plt.imshow(img_gray1, cmap='gray')
+plt.title("Gray1")
+plt.xticks([]), plt.yticks([])
+
+plt.subplot(2, 7, 8)
+plt.bar(list(range(0,256)), hist_gray1, width = 0.5, edgecolor = 'black')
+plt.xticks(list(range(0,256,255)))
 
 #gray 2
 img_gray2 = gray2(img)
-cv2.imshow('Gray2', img_gray2)
+hist_gray2 = draw_hist(img_gray2)
+plt.subplot(2, 7, 2)
+plt.imshow(img_gray2, cmap='gray')
+plt.title("Gray2")
+plt.xticks([]), plt.yticks([])
+
+plt.subplot(2, 7, 9)
+plt.bar(list(range(0,256)), hist_gray2, width = 0.5, edgecolor = 'black')
+plt.xticks(list(range(0,256,255)))
 
 #gray difference
 img_gray_diff = gray_diff(img_gray1, img_gray2)
-cv2.imshow('Gray_difference', img_gray_diff)
+hist_gray_diff = draw_hist(img_gray_diff)
+plt.subplot(2, 7, 3)
+plt.imshow(img_gray_diff, cmap='gray')
+plt.title("Gray_diff")
+plt.xticks([]), plt.yticks([])
 
-hist_gray1 = draw_hist(img_gray1)
-hist_gray2 = draw_hist(img_gray2)
-
-#plt.bar(list(range(0,256)), hist_gray1, width = 0.5, edgecolor = 'black')
-#plt.xticks(list(range(0,256,50)))
-
-#plt.bar(list(range(0,256)), hist_gray2, width = 0.5, edgecolor = 'black')
-#plt.xticks(list(range(0,256,50)))
-
-#plt.show()
+plt.subplot(2, 7, 10)
+plt.bar(list(range(0,256)), hist_gray_diff, width = 0.5, edgecolor = 'black')
+plt.xticks(list(range(0,256,255)))
 
 #binary imgae
-threshold = 127
+threshold = 70
 img_bin = bin_img(img_gray2, threshold)
-cv2.imshow('Binary imgae', img_bin)
+hist_binary = draw_hist(img_bin)
+plt.subplot(2, 7, 4)
+plt.imshow(img_bin, cmap='gray')
+plt.title("Binary")
+plt.xticks([]), plt.yticks([])
+
+plt.subplot(2, 7, 11)
+plt.bar(list(range(0,256)), hist_binary, width = 0.5, edgecolor = 'black')
+plt.xticks(list(range(0,256,255)))
 
 #scale image
 scale = 2
 img_scale = scale_img(img, scale)
-cv2.imshow('Scale image', img_scale)
+cv2.imshow('Enlarge', img_scale)
 
 #adjust grayscale
-grayscale_level = 2
+grayscale_level = 7
 img_new_graylevel = adj_graylevel(img_gray1, grayscale_level)
-plt.imshow(img_new_graylevel, cmap='gray', vmin = 0, vmax = grayscale_level-1)
-#plt.show()
+hist_adjust_grayscale = draw_hist(img_new_graylevel)
+plt.subplot(2, 7, 5)
+plt.imshow(img_new_graylevel, cmap='gray', vmin = 0, vmax = grayscale_level)
+plt.title("Adjust grayscale")
+plt.xticks([]), plt.yticks([])
+
+plt.subplot(2, 7, 12)
+plt.bar(list(range(0,256)), hist_adjust_grayscale, width = 0.5, edgecolor = 'black')
+plt.xticks(list(range(0,256,255)))
 
 #adjust brightness
 brightness = 50
 img_adjust_brightness = adj_brightness(img_gray1, brightness)
-cv2.imshow('Adjust brightness', img_adjust_brightness)
+hist_adjust_brightness = draw_hist(img_adjust_brightness)
+plt.subplot(2, 7, 6)
+plt.imshow(img_adjust_brightness, cmap='gray',  vmin = 0, vmax = 255)
+plt.title("Adjust brightness")
+plt.xticks([]), plt.yticks([])
+
+plt.subplot(2, 7, 13)
+plt.bar(list(range(0,256)), hist_adjust_brightness, width = 0.5, edgecolor = 'black')
+plt.xticks(list(range(0,256,255)))
 
 #adjust contrast
 contrast = 127
@@ -186,8 +217,17 @@ cv2.imshow('Adjust contrast', img_adjust_contrast)
 
 #histogram equalization
 img_equ = hist_equ(img_gray2)
-cv2.imshow('Histogram equalization', img_equ)
+hist_equalization = draw_hist(img_equ)
+plt.subplot(2, 7, 7)
+plt.imshow(img_equ, cmap='gray',  vmin = 0, vmax = 255)
+plt.title("Histogram equalization")
+plt.xticks([]), plt.yticks([])
 
+plt.subplot(2, 7, 14)
+plt.bar(list(range(0,256)), hist_equalization, width = 0.5, edgecolor = 'black')
+plt.xticks(list(range(0,256,255)))
+
+plt.show()
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
